@@ -1,0 +1,37 @@
+
+<div class="login-wrapper">
+  <div class="login-box">
+    <h1>CyberSoft</h1>
+    <p>Gestão Financeira</p>
+
+    <form (submit)="$event.preventDefault()">
+      <div class="form-group">
+        <label>E-mail</label>
+        <input type="email" name="email" [(ngModel)]="loginData.email" 
+               placeholder="exemplo@dominio.com" required>
+      </div>
+
+      <div class="form-group">
+        <label>Senha</label>
+        <input type="password" name="senha" [(ngModel)]="loginData.senha" 
+               placeholder="Digite sua senha" required>
+      </div>
+
+      <div *ngIf="errorMessage" class="error-alert">
+        {{ errorMessage }}
+      </div>
+
+      <div class="button-stack">
+        <button type="submit" class="btn-primary" (click)="onLogin()">
+          Entrar
+        </button>
+        
+        <div class="divider">ou</div>
+
+        <button type="button" class="btn-secondary" (click)="irParaCadastro()">
+          Criar Nova Conta 
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
