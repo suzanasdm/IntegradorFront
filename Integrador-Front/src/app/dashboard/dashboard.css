@@ -1,0 +1,87 @@
+.dashboard-wrapper {
+  background-color: #f5f7f9;
+  min-height: 100vh;
+  font-family: Arial, sans-serif;
+}
+
+/* Header Branco da Imagem */
+.main-header {
+  background: white;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 50px;
+  border-bottom: 1px solid #eee;
+}
+
+.logo img { height: 40px; }
+
+.nav-menu a {
+  margin: 0 12px;
+  color: #666;
+  text-decoration: none;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.nav-menu a.active { color: #409687; font-weight: bold; }
+
+.btn-login { background: #409687; color: white; border: none; padding: 8px 20px; border-radius: 4px; }
+.btn-signup { background: #e0e0e0; color: #333; border: none; padding: 8px 20px; border-radius: 4px; margin-left: 10px; }
+
+/* Main Content */
+.content { padding: 40px 60px; }
+
+.cards-container {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 30px;
+  margin-bottom: 40px;
+}
+
+.summary-card {
+  background: white;
+  padding: 25px;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+
+.summary-card h2 { font-size: 22px; margin-bottom: 25px; color: #333; }
+.summary-card label { color: #999; font-size: 14px; display: block; }
+.summary-card .amount { font-size: 20px; font-weight: bold; color: #333; display: block; text-align: right; }
+
+/* Grid Inferior */
+.details-grid {
+  display: grid;
+  grid-template-columns: 1fr 1.5fr;
+  gap: 30px;
+}
+
+.chart-section, .table-section {
+  background: white;
+  padding: 25px;
+  border-radius: 10px;
+  min-height: 350px;
+}
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+.data-table th { text-align: left; color: #333; border-bottom: 2px solid #f5f7f9; padding: 10px 0; }
+.data-table td { padding: 12px 0; border-bottom: 1px solid #f5f7f9; color: #666; font-size: 14px; }
+
+/* Simulação do Donut Chart da imagem */
+.donut {
+  width: 180px; height: 180px;
+  border-radius: 50%;
+  background: conic-gradient(#409687 0% 60%, #f39c12 60% 85%, #3498db 85% 100%);
+  margin: 30px auto;
+  position: relative;
+}
+.donut::before {
+  content: ""; position: absolute; top: 25px; left: 25px; 
+  width: 130px; height: 130px; background: white; border-radius: 50%;
+}
