@@ -1,17 +1,23 @@
-import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
+import { Component, OnInit, PLATFORM_ID, inject } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { Router, RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  // Importante: ReactiveFormsModule não é necessário aqui pois você usa [(ngModel)] (Template Driven)
+  imports: [CommonModule, FormsModule, RouterModule],
   templateUrl: './login.html',
   styleUrl: './login.css',
 })
-export class Login {
+export class Login implements OnInit {
+  // Injeção de dependências moderna
+  private platformId = inject(PLATFORM_ID);
+  private http = inject(HttpClient);
+  private router = inject(Router);
+
   loginData = {
     email: '',
     senha: ''
@@ -19,33 +25,44 @@ export class Login {
 
   errorMessage: string = '';
 
-  constructor(private http: HttpClient, private router: Router) {}
+  ngOnInit(): void {
+    // Se o usuário já estiver logado, manda direto para o dashboard
+    if (isPlatformBrowser(this.platformId)) {
+      const userJson = localStorage.getItem('usuarioLogado');
+      if (userJson) {
+        this.router.navigate(['/dashboard']);
+      }
+    }
+  }
 
   onLogin() {
-    // Validação de campos vazios (Regra Geral do UCS)
+    // 1. Validação básica de campos
     if (!this.loginData.email || !this.loginData.senha) {
-      this.errorMessage = 'Campo Obrigatório!';
+      this.errorMessage = 'Por favor, preencha todos os campos.';
       return;
     }
 
-    // Chamada ao Back-end (Ajuste a URL para o seu Controller de Usuário)
-    this.http.post('http://localhost:8080/usuarios/login', this.loginData)
+    // 2. Chamada ao Back-end (URL ajustada para o padrão do seu projeto)
+    this.http.post('http://localhost:8080/api/usuarios/login', this.loginData)
       .subscribe({
         next: (res: any) => {
-          // Se o banco validar, salvamos o usuário na sessão
-          localStorage.setItem('usuarioLogado', JSON.stringify(res));
-          this.router.navigate(['/home']); // Vai para a tela principal
+          if (isPlatformBrowser(this.platformId)) {
+            // Salva o objeto do usuário (ID, Nome, etc) vindo do Banco
+            localStorage.setItem('usuarioLogado', JSON.stringify(res));
+            
+            // Navega para a rota correta definida no seu routes.ts
+            this.router.navigate(['/dashboard']);
+          }
         },
         error: (err) => {
-          // Caso o e-mail ou senha não existam no banco
-          this.errorMessage = 'E-mail ou senha incorretos. Verifique seus dados.';
+          console.error('Erro no login:', err);
+          this.errorMessage = 'E-mail ou senha incorretos.';
         }
       });
   }
 
+  // Método para o link "Cadastre-se aqui"
   irParaCadastro() {
-    this.router.navigate(['/cadastro']); // Navega para a rota de cadastro (UC.002)
+    this.router.navigate(['/cadastro']);
   }
-
-
 }
