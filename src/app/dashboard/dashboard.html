@@ -1,0 +1,88 @@
+<div class="dashboard-wrapper">
+  <header class="main-header">
+    <div class="logo">
+      <img src="cyber.png" alt="CyberSoft">
+    </div>
+
+    <nav class="nav-menu">
+      <a routerLink="/dashboard" routerLinkActive="active" class="nav-card">
+        <span class="nav-text">Dashboard</span>
+      </a>
+      <a routerLink="/receitas" routerLinkActive="active" class="nav-card">
+        <span class="nav-text">Receita</span>
+      </a>
+      <a routerLink="/despesas" routerLinkActive="active" class="nav-card">
+        <span class="nav-text">Despesa</span>
+      </a>
+      <a routerLink="/orcamentos" routerLinkActive="active" class="nav-card">
+        <span class="nav-text">Orçamentos</span>
+      </a>
+      <a routerLink="/relatorios" routerLinkActive="active" class="nav-card">
+        <span class="nav-text">Relatórios</span>
+      </a>
+      <a routerLink="/contas" routerLinkActive="active" class="nav-card">
+        <span class="nav-text">Contas Bancarias</span>
+      </a>
+    </nav>
+
+    <div class="header-actions">
+      <button class="btn-login">Entrar</button>
+      <button class="btn-signup">Cadastrar</button>
+    </div>
+  </header>
+
+  <main class="content">
+    <div class="cards-container">
+      <div class="summary-card">
+        <h2>Saldo total</h2>
+        <div class="card-body">
+          <label>Saldo total</label>
+          <span class="amount">{{ dadosDashboard.saldoTotal | currency:'BRL' }}</span>
+        </div>
+      </div>
+
+      <div class="summary-card">
+        <h2>Receita</h2>
+        <div class="card-body">
+          <label>receita:</label>
+          <span class="amount success">{{ dadosDashboard.receita | currency:'BRL' }}</span>
+        </div>
+      </div>
+
+      <div class="summary-card">
+        <h2>Despesa</h2>
+        <div class="card-body">
+          <label>Despesa</label>
+          <span class="amount danger">{{ dadosDashboard.despesa | currency:'BRL' }}</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="details-grid">
+      <div class="chart-section">
+        <h3>Distribuição de gastos</h3>
+        <div class="chart-placeholder">
+          <div class="donut"></div>
+        </div>
+      </div>
+
+      <div class="table-section">
+        <h3>Últimas transações</h3>
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Data</th>
+              <th>Categoria</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let item of dadosDashboard.transacoes">
+              <td>{{ item.data | date:'dd/MM' }}</td>
+              <td>{{ item.categoria }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+</div>

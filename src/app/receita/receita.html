@@ -1,0 +1,80 @@
+<div class="container">
+  <header class="header">
+    <img src="assets/unnamed.png" class="logo">
+    <nav class="nav">
+      <a routerLink="/dashboard" class="nav-link">Dashboard</a>
+      <a routerLink="/receitas" class="nav-link active">Receita</a>
+      <a routerLink="/despesas" class="nav-link">Despesa</a>
+      <a routerLink="/orcamentos" class="nav-link">Orçamentos</a>
+      <a routerLink="/relatorios" class="nav-link">Relatórios</a>
+      <a routerLink="/contas" class="nav-link">Contas Bancarias</a>
+    </nav>
+    <div class="auth-btns">
+      <button class="btn-entrar">Entrar</button>
+      <button class="btn-cadastrar">Cadastrar</button>
+    </div>
+  </header>
+
+  <main class="main-content">
+    <div class="toggle-group">
+      <button class="toggle-btn active">Receita</button>
+      <button class="toggle-btn" routerLink="/despesas">Despesa</button>
+    </div>
+
+    <h1 class="title">Receita</h1>
+
+    <div class="card-form">
+      <div class="grid">
+        <div class="field">
+          <label>Descrição</label>
+          <input type="text" [(ngModel)]="dadosForm.descricao" placeholder="Salário">
+        </div>
+        <div class="field">
+          <label>Valor</label>
+          <input type="number" [(ngModel)]="dadosForm.valor" placeholder="R$ 0,00">
+        </div>
+        <div class="field">
+          <label>Data</label>
+          <input type="date" [(ngModel)]="dadosForm.data">
+        </div>
+        <div class="field">
+          <label>Categoria</label>
+          <div class="cat-wrapper">
+            <select [(ngModel)]="dadosForm.categoriaId" *ngIf="!exibirInputCategoria">
+              <option value="" disabled selected>Selecione</option>
+              <option *ngFor="let c of categorias" [value]="c.id">{{c.nome}}</option>
+            </select>
+            <input type="text" [(ngModel)]="novaCategoriaNome" *ngIf="exibirInputCategoria" placeholder="Nova categoria...">
+            
+            <button class="btn-plus" (click)="exibirInputCategoria ? salvarCategoria() : exibirInputCategoria = true">
+              {{ exibirInputCategoria ? 'OK' : '+' }}
+            </button>
+          </div>
+        </div>
+      </div>
+      <button class="btn-salvar" (click)="salvarReceita()">Salvar</button>
+    </div>
+
+    <section class="table-section">
+      <h2>Receitas</h2>
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Data</th>
+            <th>Descrição</th>
+            <th>Categoria</th>
+            <th>Valor</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let item of listaReceitas">
+            <td>{{ item.data | date:'dd/MM/yyyy' }}</td>
+            <td>{{ item.descricao }}</td>
+            <td>{{ item.categoria?.nome }}</td>
+            <td class="val">R$ {{ item.valor }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+  </main>
+</div>
