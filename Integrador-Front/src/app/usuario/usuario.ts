@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import{ Usuario } from '../models/Usuario.model';
 
 @Component({
   selector: 'app-usuario',
@@ -6,4 +7,13 @@ import { Component } from '@angular/core';
   templateUrl: './usuario.html',
   styleUrl: './usuario.css',
 })
-export class Usuario {}
+export class Usuariocomponent {
+    novoUsuario: Usuario=  {
+
+  nome: '',
+  email: '',
+  senha: '',
+
+
+  };
+}

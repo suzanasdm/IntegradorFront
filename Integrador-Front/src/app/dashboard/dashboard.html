@@ -41,15 +41,15 @@
         </div>
       </div>
 
-      <div class="summary-card">
-        <h2>Receita</h2>
+      <div class="summary-card"  routerLink="/receitas" routerLinkActive="active" >
+        <h2 >Receita</h2>
         <div class="card-body">
           <label>receita:</label>
           <span class="amount success">{{ dadosDashboard.receita | currency:'BRL' }}</span>
         </div>
       </div>
 
-      <div class="summary-card">
+      <div class="summary-card" routerLink="/despesas" routerLinkActive="active">
         <h2>Despesa</h2>
         <div class="card-body">
           <label>Despesa</label>
