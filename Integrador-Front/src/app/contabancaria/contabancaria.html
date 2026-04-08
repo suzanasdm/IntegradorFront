@@ -1,1 +1,62 @@
-<p>contabancaria works!</p>
+<div class="dashboard-wrapper">
+  <header class="main-header">
+    <div class="logo">
+      <img src="https://i.postimg.cc/02TXJFHg/unnamed.png" alt="CyberSoft">
+    </div>
+    
+    <nav class="nav-menu">
+      <a routerLink="/dashboard" routerLinkActive="active">Dashboard</a>
+      <a routerLink="/receitas" routerLinkActive="active">Receita</a>
+      <a routerLink="/despesas" routerLinkActive="active">Despesa</a>
+      <a routerLink="/orcamentos" routerLinkActive="active">Orçamentos</a>
+      <a routerLink="/relatorios" routerLinkActive="active">Relatórios</a>
+      <a routerLink="/contas" routerLinkActive="active">Contas Bancarias</a>
+    </nav>
+
+    <div class="header-actions">
+      <button class="btn-login">Entrar</button>
+      <button class="btn-signup">Cadastrar</button>
+    </div>
+  </header>
+
+  <main class="content">
+    <div class="form-container">
+      
+      <div class="summary-card form-card">
+        <h2>Nova Conta Bancária</h2>
+        
+        <form (ngSubmit)="cadastrar()">
+          <div class="form-group">
+            <label>Banco</label>
+            <select name="banco" [(ngModel)]="dadosForm.banco" class="input-field" required>
+              <option value="" disabled selected>Selecione seu banco</option>
+              <option *ngFor="let opcao of opcoesBancos" [value]="opcao.value">
+                {{ opcao.label }}
+              </option>
+            </select>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>Agência</label>
+              <input type="text" name="agencia" [(ngModel)]="dadosForm.agencia" class="input-field" placeholder="0001" required>
+            </div>
+            
+            <div class="form-group">
+              <label>Número da Conta</label>
+              <input type="text" name="numeroConta" [(ngModel)]="dadosForm.numeroConta" class="input-field" placeholder="00000-0" required>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Saldo Inicial</label>
+            <input type="number" name="saldo" [(ngModel)]="dadosForm.saldo" class="input-field" placeholder="0,00" required>
+          </div>
+
+          <button type="submit" class="btn-login full-width">Cadastrar Conta</button>
+        </form>
+
+      </div>
+    </div>
+  </main>
+</div>
