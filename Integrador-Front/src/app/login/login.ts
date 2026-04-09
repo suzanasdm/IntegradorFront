@@ -1,8 +1,8 @@
-import { CommonModule, isPlatformBrowser } from '@angular/common';
-import { HttpClient } from '@angular/common/http';
-import { Component, OnInit, PLATFORM_ID, inject } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { Component, OnInit, inject } from '@angular/core';
+import { LoginService }from '../services/login';
 import { Router, RouterModule } from '@angular/router';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-login',
@@ -13,56 +13,34 @@ import { Router, RouterModule } from '@angular/router';
   styleUrl: './login.css',
 })
 export class Login implements OnInit {
-  // Injeção de dependências moderna
-  private platformId = inject(PLATFORM_ID);
-  private http = inject(HttpClient);
+  // Atualize aqui o nome da propriedade e do Service injetado
+  private loginService = inject(LoginService);
   private router = inject(Router);
 
-  loginData = {
-    email: '',
-    senha: ''
-  };
-
+  loginData = { email: '', senha: '' };
   errorMessage: string = '';
 
   ngOnInit(): void {
-    // Se o usuário já estiver logado, manda direto para o dashboard
-    if (isPlatformBrowser(this.platformId)) {
-      const userJson = localStorage.getItem('usuarioLogado');
-      if (userJson) {
-        this.router.navigate(['/dashboard']);
-      }
+    // Usando o método renomeado
+    if (this.loginService.isUsuarioLogado()) {
+      this.router.navigate(['/login']);
     }
   }
 
   onLogin() {
-    // 1. Validação básica de campos
     if (!this.loginData.email || !this.loginData.senha) {
       this.errorMessage = 'Por favor, preencha todos os campos.';
       return;
     }
 
-    // 2. Chamada ao Back-end (URL ajustada para o padrão do seu projeto)
-    this.http.post('http://localhost:8080/api/usuarios/login', this.loginData)
-      .subscribe({
-        next: (res: any) => {
-          if (isPlatformBrowser(this.platformId)) {
-            // Salva o objeto do usuário (ID, Nome, etc) vindo do Banco
-            localStorage.setItem('usuarioLogado', JSON.stringify(res));
-            
-            // Navega para a rota correta definida no seu routes.ts
-            this.router.navigate(['/dashboard']);
-          }
-        },
-        error: (err) => {
-          console.error('Erro no login:', err);
-          this.errorMessage = 'E-mail ou senha incorretos.';
-        }
-      });
-  }
-
-  // Método para o link "Cadastre-se aqui"
-  irParaCadastro() {
-    this.router.navigate(['/cadastro']);
+    this.loginService.login(this.loginData).subscribe({
+      next: () => {
+        this.router.navigate(['/dashboard']);
+      },
+      error: (err) => {
+        console.error('Erro no login:', err);
+        this.errorMessage = 'E-mail ou senha incorretos.';
+      }
+    });
   }
 }

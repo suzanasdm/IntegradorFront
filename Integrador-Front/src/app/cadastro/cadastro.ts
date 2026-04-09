@@ -40,7 +40,7 @@ export class Cadastro implements OnInit {
             // Salva o usuário igual você faz no login/dashboard
             localStorage.setItem('usuarioLogado', JSON.stringify(res));
             // Navega para o dashboard funcional
-            this.router.navigate(['/dashboard']);
+            this.router.navigate(['/login']);
           }
         },
         error: (err) => console.error('Erro ao cadastrar', err)

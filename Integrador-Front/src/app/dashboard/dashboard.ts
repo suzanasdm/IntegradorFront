@@ -12,8 +12,12 @@ import { Router, RouterModule } from '@angular/router';
   styleUrl: './dashboard.css',
 })
 export class Dashboard implements OnInit {
-  // Injetamos o ID da plataforma para saber se é navegador ou servidor
   private platformId = inject(PLATFORM_ID);
+
+  // Propriedades para a Sidebar
+  exibirSidebar: boolean = false;
+  usuarioCompleto: any = {};
+  contasBancarias: any[] = [];
 
   dadosDashboard: any = {
     saldoTotal: 0,
@@ -27,7 +31,6 @@ export class Dashboard implements OnInit {
   constructor(private http: HttpClient, private router: Router) {}
 
   ngOnInit(): void {
-    // ESSA LINHA É A CURA DO ERRO:
     if (isPlatformBrowser(this.platformId)) {
       const userJson = localStorage.getItem('usuarioLogado');
       
@@ -37,9 +40,23 @@ export class Dashboard implements OnInit {
       }
 
       const user = JSON.parse(userJson);
+      this.usuarioCompleto = user;
       this.usuarioNome = user.nome || 'Usuário';
       this.carregarDados(user.id);
+      this.carregarContas(user.id); // Carrega as contas para exibir na sidebar
     }
+  }
+
+  // Função para abrir/fechar a sidebar
+  toggleSidebar(): void {
+    this.exibirSidebar = !this.exibirSidebar;
+  }
+
+  carregarContas(idUsuario: number) {
+    this.http.get(`http://localhost:8080/api/contas/usuario/${idUsuario}`).subscribe({
+      next: (res: any) => { this.contasBancarias = res; },
+      error: (err) => console.error('Erro ao buscar contas', err)
+    });
   }
 
   carregarDados(idUsuario: number) {
