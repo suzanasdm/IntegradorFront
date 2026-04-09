@@ -1,32 +1,51 @@
 <div class="dashboard-wrapper">
+  
+  <aside class="sidebar" [class.active]="exibirSidebar">
+    <div class="sidebar-header">
+      <img src="https://i.postimg.cc/02TXJFHg/unnamed.png" alt="Logo" class="sidebar-logo">
+      <button class="btn-close-sidebar" (click)="toggleSidebar()">✕</button>
+    </div>
+
+    <div class="sidebar-user-card">
+      <div class="user-avatar">{{ usuarioNome.charAt(0) }}</div>
+      <p class="welcome-text">Bem-vindo,</p>
+      <h3 class="user-display-name">{{ usuarioNome }}</h3>
+      <p class="user-display-email">{{ usuarioCompleto.email }}</p>
+    </div>
+
+    <hr class="sidebar-divider">
+
+    <div class="sidebar-accounts-list">
+      <h4>Minhas Contas</h4>
+      <div class="mini-account-card" *ngFor="let conta of contasBancarias">
+        <span class="mini-bank-name">{{ conta.banco }}</span>
+        <span class="mini-acc-details">Ag: {{ conta.agencia }} | C: {{ conta.numeroConta }}</span>
+        <span class="mini-acc-balance">{{ conta.saldo | currency:'BRL' }}</span>
+      </div>
+      <p *ngIf="contasBancarias.length === 0" class="empty-state">Nenhuma conta cadastrada.</p>
+    </div>
+
+    <button class="btn-sidebar-logout" (click)="logout()">Sair da Conta</button>
+  </aside>
+
+  <div class="sidebar-overlay" *ngIf="exibirSidebar" (click)="toggleSidebar()"></div>
+
   <header class="main-header">
     <div class="logo">
-      <img src="https://i.postimg.cc/02TXJFHg/unnamed.png" alt="CyberSoft">
+      <img src="https://i.postimg.cc/02TXJFHg/unnamed.png" alt="CyberSoft" (click)="toggleSidebar()" style="cursor: pointer;">
     </div>
     
     <nav class="nav-menu">
-      <a routerLink="/dashboard" routerLinkActive="active" class="nav-card">
-        <span class="nav-text">Dashboard</span>
-      </a>
-      <a routerLink="/receitas" routerLinkActive="active" class="nav-card">
-        <span class="nav-text">Receita</span>
-      </a>
-      <a routerLink="/despesas" routerLinkActive="active" class="nav-card">
-        <span class="nav-text">Despesa</span>
-      </a>
-      <a routerLink="/orcamentos" routerLinkActive="active" class="nav-card">
-        <span class="nav-text">Orçamentos</span>
-      </a>
-      <a routerLink="/relatorios" routerLinkActive="active" class="nav-card">
-        <span class="nav-text">Relatórios</span>
-      </a>
-      <a routerLink="/contasbancarias" routerLinkActive="active" class="nav-card">
-        <span class="nav-text">Contas Bancarias</span>
-      </a>
+      <a routerLink="/dashboard" routerLinkActive="active">Dashboard</a>
+      <a routerLink="/receitas" routerLinkActive="active">Receita</a>
+      <a routerLink="/despesas" routerLinkActive="active">Despesa</a>
+      <a routerLink="/orcamentos" routerLinkActive="active">Orçamentos</a>
+      <a routerLink="/relatorios" routerLinkActive="active">Relatórios</a>
+      <a routerLink="/contasbancarias" routerLinkActive="active">Contas Bancarias</a>
     </nav>
 
     <div class="header-actions">
-      <button class="btn-login">Entrar</button>
+      <button class="btn-login" (click)="logout()">Sair</button>
       <button class="btn-signup">Cadastrar</button>
     </div>
   </header>
@@ -41,15 +60,15 @@
         </div>
       </div>
 
-      <div class="summary-card"  routerLink="/receitas" routerLinkActive="active" >
-        <h2 >Receita</h2>
+      <div class="summary-card" routerLink="/receitas">
+        <h2>Receita</h2>
         <div class="card-body">
           <label>receita:</label>
           <span class="amount success">{{ dadosDashboard.receita | currency:'BRL' }}</span>
         </div>
       </div>
 
-      <div class="summary-card" routerLink="/despesas" routerLinkActive="active">
+      <div class="summary-card" routerLink="/despesas">
         <h2>Despesa</h2>
         <div class="card-body">
           <label>Despesa</label>

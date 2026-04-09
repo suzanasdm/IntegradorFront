@@ -17,10 +17,13 @@ export class Receita implements OnInit {
   private router = inject(Router);
 
   usuarioId: number = 0;
+  usuarioNome: string = '';
+  usuarioCompleto: any = {};
+  contasBancarias: any[] = [];
+  exibirSidebar: boolean = false;
   exibirInputCategoria = false;
   novaCategoriaNome = '';
 
-  // Dados iniciais vazios para puxar do banco
   dadosForm = { descricao: '', valor: 0, data: '', categoriaId: '' };
   categorias: any[] = [];
   listaReceitas: any[] = [];
@@ -29,39 +32,77 @@ export class Receita implements OnInit {
     if (isPlatformBrowser(this.platformId)) {
       const user = JSON.parse(localStorage.getItem('usuarioLogado') || '{}');
       this.usuarioId = user.id;
-      if (!this.usuarioId) this.router.navigate(['/login']);
+      this.usuarioNome = user.nome || 'Usuário';
+      this.usuarioCompleto = user;
+
+      if (!this.usuarioId) {
+        this.router.navigate(['/login']);
+        return;
+      }
 
       this.carregarCategorias();
       this.carregarReceitas();
+      this.carregarContas();
     }
+  }
+
+  toggleSidebar(): void {
+    this.exibirSidebar = !this.exibirSidebar;
+  }
+
+  carregarContas() {
+    this.http.get<any[]>(`http://localhost:8080/api/contas/usuario/${this.usuarioId}`)
+      .subscribe({
+        next: (res) => this.contasBancarias = res,
+        error: (err) => console.error('Erro ao buscar contas', err)
+      });
   }
 
   carregarCategorias() {
     this.http.get<any[]>(`http://localhost:8080/api/categorias/usuario/${this.usuarioId}`)
-      .subscribe(res => this.categorias = res);
+      .subscribe({
+        next: (res) => this.categorias = res,
+        error: (err) => console.error('Erro ao buscar categorias', err)
+      });
   }
 
   carregarReceitas() {
     this.http.get<any[]>(`http://localhost:8080/api/receitas/usuario/${this.usuarioId}`)
-      .subscribe(res => this.listaReceitas = res);
+      .subscribe({
+        next: (res) => this.listaReceitas = res,
+        error: (err) => console.error('Erro ao buscar receitas', err)
+      });
   }
 
   salvarCategoria() {
     if (!this.novaCategoriaNome) return;
     const payload = { nome: this.novaCategoriaNome, usuarioId: this.usuarioId };
-    this.http.post('http://localhost:8080/api/categorias', payload).subscribe((res: any) => {
-      this.categorias.push(res);
-      this.dadosForm.categoriaId = res.id;
-      this.novaCategoriaNome = '';
-      this.exibirInputCategoria = false;
+    this.http.post('http://localhost:8080/api/categorias', payload).subscribe({
+      next: (res: any) => {
+        this.categorias.push(res);
+        this.dadosForm.categoriaId = res.id;
+        this.novaCategoriaNome = '';
+        this.exibirInputCategoria = false;
+      },
+      error: (err) => console.error('Erro ao salvar categoria', err)
     });
   }
 
   salvarReceita() {
     const payload = { ...this.dadosForm, usuarioId: this.usuarioId };
-    this.http.post('http://localhost:8080/api/receitas', payload).subscribe(() => {
-      this.carregarReceitas();
-      this.dadosForm = { descricao: '', valor: 0, data: '', categoriaId: '' };
+    this.http.post('http://localhost:8080/api/receitas', payload).subscribe({
+      next: () => {
+        this.carregarReceitas();
+        this.dadosForm = { descricao: '', valor: 0, data: '', categoriaId: '' };
+      },
+      error: (err) => console.error('Erro ao salvar receita', err)
     });
+  }
+
+  logout() {
+    if (isPlatformBrowser(this.platformId)) {
+      localStorage.removeItem('usuarioLogado');
+      this.router.navigate(['/login']);
+    }
   }
 }

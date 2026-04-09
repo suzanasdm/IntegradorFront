@@ -17,10 +17,13 @@ export class Despesa implements OnInit {
   private router = inject(Router);
 
   usuarioId: number = 0;
+  usuarioNome: string = '';
+  usuarioCompleto: any = {};
+  contasBancarias: any[] = [];
+  exibirSidebar: boolean = false;
   exibirInputCategoria = false;
   novaCategoriaNome = '';
 
-  // Inicia vazio para coerência com o banco
   dadosForm = { descricao: '', valor: 0, data: '', categoriaId: '' };
   categorias: any[] = [];
   listaDespesas: any[] = [];
@@ -29,15 +32,33 @@ export class Despesa implements OnInit {
     if (isPlatformBrowser(this.platformId)) {
       const user = JSON.parse(localStorage.getItem('usuarioLogado') || '{}');
       this.usuarioId = user.id;
-      if (!this.usuarioId) this.router.navigate(['/login']);
+      this.usuarioNome = user.nome || 'Usuário';
+      this.usuarioCompleto = user;
+
+      if (!this.usuarioId) {
+        this.router.navigate(['/login']);
+        return;
+      }
 
       this.carregarCategorias();
       this.carregarDespesas();
+      this.carregarContas();
     }
   }
 
+  toggleSidebar(): void {
+    this.exibirSidebar = !this.exibirSidebar;
+  }
+
+  carregarContas() {
+    this.http.get<any[]>(`http://localhost:8080/api/contas/usuario/${this.usuarioId}`)
+      .subscribe({
+        next: (res) => this.contasBancarias = res,
+        error: (err) => console.error('Erro ao buscar contas', err)
+      });
+  }
+
   carregarCategorias() {
-    // Busca categorias do usuário
     this.http.get<any[]>(`http://localhost:8080/api/categorias/usuario/${this.usuarioId}`)
       .subscribe(res => this.categorias = res);
   }
@@ -67,5 +88,12 @@ export class Despesa implements OnInit {
       },
       error: (err) => console.error('Erro ao salvar despesa', err)
     });
+  }
+
+  logout() {
+    if (isPlatformBrowser(this.platformId)) {
+      localStorage.removeItem('usuarioLogado');
+      this.router.navigate(['/login']);
+    }
   }
 }

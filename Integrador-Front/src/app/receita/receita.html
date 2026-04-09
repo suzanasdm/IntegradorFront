@@ -1,17 +1,50 @@
-<div class="container">
-  <header class="header">
-    <img src="https://i.postimg.cc/02TXJFHg/unnamed.png" class="logo">
-    <nav class="nav">
-      <a routerLink="/dashboard" class="nav-link">Dashboard</a>
-      <a routerLink="/receitas" class="nav-link active">Receita</a>
-      <a routerLink="/despesas" class="nav-link">Despesa</a>
-      <a routerLink="/orcamentos" class="nav-link">Orçamentos</a>
-      <a routerLink="/relatorios" class="nav-link">Relatórios</a>
-      <a routerLink="/contasbancarias" class="nav-link">Contas Bancarias</a>
+<div class="page-wrapper">
+
+  <aside class="sidebar" [class.active]="exibirSidebar">
+    <div class="sidebar-header">
+      <img src="https://i.postimg.cc/02TXJFHg/unnamed.png" alt="Logo" class="sidebar-logo">
+      <button class="btn-close-sidebar" (click)="toggleSidebar()">✕</button>
+    </div>
+
+    <div class="sidebar-profile">
+      <div class="user-avatar">{{ usuarioNome.charAt(0) }}</div>
+      <p class="greeting">Bem-vindo,</p>
+      <h3>{{ usuarioNome }}</h3>
+      <p class="user-mail">{{ usuarioCompleto.email }}</p>
+    </div>
+
+    <hr class="sidebar-divider">
+
+    <div class="sidebar-accounts">
+      <h4>Minhas Contas</h4>
+      <div class="acc-card" *ngFor="let conta of contasBancarias">
+        <span class="bank-name">{{ conta.banco }}</span>
+        <span class="acc-info">Ag: {{ conta.agencia }} | C: {{ conta.numeroConta }}</span>
+        <span class="acc-value">{{ conta.saldo | currency:'BRL' }}</span>
+      </div>
+      <p *ngIf="contasBancarias.length === 0" class="empty-msg">Nenhuma conta cadastrada.</p>
+    </div>
+
+    <button class="logout-btn-sidebar" (click)="logout()">Sair da Conta</button>
+  </aside>
+
+  <div class="sidebar-overlay" *ngIf="exibirSidebar" (click)="toggleSidebar()"></div>
+
+  <header class="main-header">
+    <div class="logo">
+      <img src="https://i.postimg.cc/02TXJFHg/unnamed.png" alt="CyberSoft" (click)="toggleSidebar()" style="cursor: pointer;">
+    </div>
+    <nav class="nav-menu">
+      <a routerLink="/dashboard" routerLinkActive="active" class="nav-card">Dashboard</a>
+      <a routerLink="/receitas" routerLinkActive="active" class="nav-card">Receita</a>
+      <a routerLink="/despesas" routerLinkActive="active" class="nav-card">Despesa</a>
+      <a routerLink="/orcamentos" routerLinkActive="active" class="nav-card">Orçamentos</a>
+      <a routerLink="/relatorios" routerLinkActive="active" class="nav-card">Relatórios</a>
+      <a routerLink="/contasbancarias" routerLinkActive="active" class="nav-card">Contas Bancarias</a>
     </nav>
-    <div class="auth-btns">
-      <button class="btn-entrar">Entrar</button>
-      <button class="btn-cadastrar">Cadastrar</button>
+    <div class="header-actions">
+      <button class="btn-login" (click)="logout()">Sair</button>
+      <button class="btn-signup">Cadastrar</button>
     </div>
   </header>
 
@@ -21,31 +54,35 @@
       <button class="toggle-btn" routerLink="/despesas">Despesa</button>
     </div>
 
-    <h1 class="title">Receita</h1>
+    <h1 class="page-title">Receita</h1>
 
-    <div class="card-form">
-      <div class="grid">
-        <div class="field">
+    <div class="form-card">
+      <div class="form-grid">
+        <div class="form-field">
           <label>Descrição</label>
           <input type="text" [(ngModel)]="dadosForm.descricao" placeholder="Salário">
         </div>
-        <div class="field">
+
+        <div class="form-field">
           <label>Valor</label>
           <input type="number" [(ngModel)]="dadosForm.valor" placeholder="R$ 0,00">
         </div>
-        <div class="field">
+
+        <div class="form-field">
           <label>Data</label>
-          <input type="date" [(ngModel)]="dadosForm.data">
+          <div class="date-wrapper">
+            <input type="date" [(ngModel)]="dadosForm.data">
+          </div>
         </div>
-        <div class="field">
+
+        <div class="form-field">
           <label>Categoria</label>
           <div class="cat-wrapper">
             <select [(ngModel)]="dadosForm.categoriaId" *ngIf="!exibirInputCategoria">
               <option value="" disabled selected>Selecione</option>
-              <option *ngFor="let c of categorias" [value]="c.id">{{c.nome}}</option>
+              <option *ngFor="let c of categorias" [value]="c.id">{{ c.nome }}</option>
             </select>
             <input type="text" [(ngModel)]="novaCategoriaNome" *ngIf="exibirInputCategoria" placeholder="Nova categoria...">
-            
             <button class="btn-plus" (click)="exibirInputCategoria ? salvarCategoria() : exibirInputCategoria = true">
               {{ exibirInputCategoria ? 'OK' : '+' }}
             </button>
@@ -55,9 +92,9 @@
       <button class="btn-salvar" (click)="salvarReceita()">Salvar</button>
     </div>
 
-    <section class="table-section">
-      <h2>Receitas</h2>
-      <table class="table">
+    <div class="table-card">
+      <h2 class="table-title">Receitas</h2>
+      <table class="data-table">
         <thead>
           <tr>
             <th>Data</th>
@@ -71,10 +108,13 @@
             <td>{{ item.data | date:'dd/MM/yyyy' }}</td>
             <td>{{ item.descricao }}</td>
             <td>{{ item.categoria?.nome }}</td>
-            <td class="val">R$ {{ item.valor }}</td>
+            <td class="val-receita">{{ item.valor | currency:'BRL' }}</td>
+          </tr>
+          <tr *ngIf="listaReceitas.length === 0">
+            <td colspan="4" class="empty-row">Nenhuma receita cadastrada.</td>
           </tr>
         </tbody>
       </table>
-    </section>
+    </div>
   </main>
 </div>
